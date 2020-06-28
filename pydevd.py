@@ -25,7 +25,8 @@ from _pydev_bundle.pydev_override import overrides
 from _pydev_imps._pydev_saved_modules import thread
 from _pydev_imps._pydev_saved_modules import threading
 from _pydev_imps._pydev_saved_modules import time
-from _pydevd_bundle import pydevd_extension_utils, pydevd_frame_utils, pydevd_constants
+from _pydevd_bundle import pydevd_extension_utils, pydevd_frame_utils, pydevd_constants, \
+    pydevd_timeout
 from _pydevd_bundle.pydevd_filtering import FilesFiltering
 from _pydevd_bundle import pydevd_io, pydevd_vm_type
 from _pydevd_bundle import pydevd_utils
@@ -76,6 +77,7 @@ from _pydevd_bundle.pydevd_collect_bytecode_info import collect_try_except_info,
 from _pydevd_bundle.pydevd_suspended_frames import SuspendedFramesManager
 from socket import SHUT_RDWR
 from _pydevd_bundle.pydevd_api import PyDevdAPI
+from _pydevd_bundle.pydevd_timeout import TimeoutTracker
 
 if USE_CUSTOM_SYS_CURRENT_FRAMES_MAP:
     from _pydevd_bundle.pydevd_additional_thread_info_regular import _tid_to_last_frame
@@ -309,10 +311,14 @@ class AbstractSingleNotificationBehavior(object):
             self._pause_requested = True
             global_suspend_time = self._suspend_time_request
         py_db = self._py_db()
-        run_as_pydevd_daemon_thread(py_db, self._notify_after_timeout, global_suspend_time)
+        if py_db is not None:
+            py_db.timeout_tracker.call_on_timeout(
+                self.NOTIFY_OF_PAUSE_TIMEOUT,
+                self._notify_after_timeout,
+                kwargs={'global_suspend_time', global_suspend_time}
+            )
 
     def _notify_after_timeout(self, global_suspend_time):
-        time.sleep(self.NOTIFY_OF_PAUSE_TIMEOUT)
         with self._lock:
             if self._suspended_thread_ids:
                 if global_suspend_time > self._last_suspend_notification_time:
@@ -467,6 +473,8 @@ class PyDB(object):
         self._cmd_queue = defaultdict(_queue.Queue)  # Key is thread id or '*', value is Queue
         self.suspended_frames_manager = SuspendedFramesManager()
         self._files_filtering = FilesFiltering()
+        self.timeout_tracker = TimeoutTracker(self)
+
         # Note: when the source mapping is changed we also have to clear the file types cache
         # (because if a given file is a part of the project or not may depend on it being
         # defined in the source mapping).
