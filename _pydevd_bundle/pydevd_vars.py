@@ -9,6 +9,8 @@ from _pydevd_bundle.pydevd_xml import ExceptionOnEvaluate, get_type, var_to_xml
 from _pydev_bundle import pydev_log
 import codecs
 import os
+from contextlib import contextmanager
+import functools
 
 try:
     from StringIO import StringIO
@@ -18,7 +20,7 @@ import sys  # @Reimport
 
 from _pydev_imps._pydev_saved_modules import threading
 import traceback
-from _pydevd_bundle import pydevd_save_locals
+from _pydevd_bundle import pydevd_save_locals, pydevd_timeout, pydevd_constants
 from _pydev_bundle.pydev_imports import Exec, execfile
 from _pydevd_bundle.pydevd_utils import to_string
 
@@ -290,7 +292,43 @@ def eval_in_context(expression, globals, locals):
     return result
 
 
-def evaluate_expression(dbg, frame, expression, is_exec):
+@contextmanager
+def _ctx(original_func):
+
+    @functools.wraps(original_func)
+    def new_func(py_db, *args, **kwargs):
+        if py_db.multi_threads_single_notification:
+            timeout_tracker = py_db.timeout_tracker  # : :type timeout_tracker: TimeoutTracker
+            # interrupt_thread_callback = pydevd_timeout.create_interrupt_this_thread_callback()
+
+            def on_timeout():
+                pass
+
+            unblock_threads_timeout = pydevd_constants.PYDEVD_UNBLOCK_THREADS_TIMEOUT
+
+            interrupt_thread_timeout = pydevd_constants.PYDEVD_INTERRUPT_THREAD_TIMEOUT
+
+            if unblock_threads_timeout < 0:
+                on_timeout = None
+
+            elif unblock_threads_timeout == 0:
+                on_timeout()  # call it now
+                on_timeout = None
+
+            if on_timeout is not None:
+                return original_func(py_db, *args, **kwargs)
+            else:
+                with timeout_tracker.call_on_timeout(unblock_threads_timeout, on_timeout):
+                    return original_func(py_db, *args, **kwargs)
+
+        else:
+            return original_func(py_db, *args, **kwargs)
+
+    return new_func
+
+
+@_ctx
+def evaluate_expression(py_db, frame, expression, is_exec):
     '''
     There are some changes in this function depending on whether it's an exec or an eval.
 

@@ -183,6 +183,16 @@ class TimeoutTracker(object):
 
 def create_interrupt_this_thread_callback():
     '''
+    The idea here is returning a callback that when called will generate a KeyboardInterrupt
+    in the thread that called this function.
+
+    If this is the main thread, this means that it'll emulate a Ctrl+C (which may stop I/O
+    and sleep operations).
+
+    For other threads, this will call PyThreadState_SetAsyncExc to raise
+    a KeyboardInterrupt before the next instruction (so, it won't really interrupt I/O or
+    sleep operations).
+
     :return callable:
         Returns a callback that will interrupt the current thread (this may be called
         from an auxiliary thread).

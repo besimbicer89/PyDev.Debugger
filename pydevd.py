@@ -314,7 +314,7 @@ class AbstractSingleNotificationBehavior(object):
             py_db.timeout_tracker.call_on_timeout(
                 self.NOTIFY_OF_PAUSE_TIMEOUT,
                 self._notify_after_timeout,
-                kwargs={'global_suspend_time', global_suspend_time}
+                kwargs={'global_suspend_time': global_suspend_time}
             )
 
     def _notify_after_timeout(self, global_suspend_time):
