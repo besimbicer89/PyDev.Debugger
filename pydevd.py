@@ -25,8 +25,7 @@ from _pydev_bundle.pydev_override import overrides
 from _pydev_imps._pydev_saved_modules import thread
 from _pydev_imps._pydev_saved_modules import threading
 from _pydev_imps._pydev_saved_modules import time
-from _pydevd_bundle import pydevd_extension_utils, pydevd_frame_utils, pydevd_constants, \
-    pydevd_timeout
+from _pydevd_bundle import pydevd_extension_utils, pydevd_frame_utils, pydevd_constants
 from _pydevd_bundle.pydevd_filtering import FilesFiltering
 from _pydevd_bundle import pydevd_io, pydevd_vm_type
 from _pydevd_bundle import pydevd_utils
@@ -41,7 +40,7 @@ from _pydevd_bundle.pydevd_constants import (IS_JYTH_LESS25, get_thread_id, get_
     dict_keys, dict_iter_items, DebugInfoHolder, PYTHON_SUSPEND, STATE_SUSPEND, STATE_RUN, get_frame,
     clear_cached_thread_id, INTERACTIVE_MODE_AVAILABLE, SHOW_DEBUG_INFO_ENV, IS_PY34_OR_GREATER, IS_PY2, NULL,
     NO_FTRACE, IS_IRONPYTHON, JSON_PROTOCOL, IS_CPYTHON, HTTP_JSON_PROTOCOL, USE_CUSTOM_SYS_CURRENT_FRAMES_MAP, call_only_once,
-    ForkSafeLock, IGNORE_BASENAMES_STARTING_WITH, LIBRARY_CODE_BASENAMES_STARTING_WITH)
+    ForkSafeLock, IGNORE_BASENAMES_STARTING_WITH)
 from _pydevd_bundle.pydevd_defaults import PydevdCustomization  # Note: import alias used on pydev_monkey.
 from _pydevd_bundle.pydevd_custom_frames import CustomFramesContainer, custom_frames_container_init
 from _pydevd_bundle.pydevd_dont_trace_files import DONT_TRACE, PYDEV_FILE, LIB_FILE, DONT_TRACE_DIRS
@@ -66,7 +65,7 @@ from _pydevd_bundle.pydevd_comm import(InternalConsoleExec,
     PyDBDaemonThread, _queue, ReaderThread, GetGlobalDebugger, get_global_debugger,
     set_global_debugger, WriterThread,
     start_client, start_server, InternalGetBreakpointException, InternalSendCurrExceptionTrace,
-    InternalSendCurrExceptionTraceProceeded, run_as_pydevd_daemon_thread)
+    InternalSendCurrExceptionTraceProceeded)
 
 from _pydevd_bundle.pydevd_process_net_command_json import PyDevJsonCommandProcessor
 from _pydevd_bundle.pydevd_process_net_command import process_net_command

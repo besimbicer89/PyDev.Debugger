@@ -17,7 +17,7 @@ from _pydevd_bundle._debug_adapter.pydevd_schema import (ThreadEvent, ModuleEven
 from _pydevd_bundle.pydevd_comm_constants import file_system_encoding
 from _pydevd_bundle.pydevd_constants import (int_types, IS_64BIT_PROCESS,
     PY_VERSION_STR, PY_IMPL_VERSION_STR, PY_IMPL_NAME, IS_PY36_OR_GREATER, IS_PY39_OR_GREATER,
-    IS_PY37_OR_GREATER, IS_PYPY, GENERATED_LEN_ATTR_NAME)
+    IS_PYPY, GENERATED_LEN_ATTR_NAME)
 from tests_python import debugger_unittest
 from tests_python.debug_constants import TEST_CHERRYPY, IS_PY2, TEST_DJANGO, TEST_FLASK, IS_PY26, \
     IS_PY27, IS_CPYTHON, TEST_GEVENT

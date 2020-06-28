@@ -254,7 +254,7 @@ def eval_in_context(expression, globals, locals):
     result = None
     try:
         result = eval(_expression_to_evaluate(expression), globals, locals)
-    except Exception:
+    except (Exception, KeyboardInterrupt):
         s = StringIO()
         traceback.print_exc(file=s)
         result = s.getvalue()
@@ -291,21 +291,38 @@ def eval_in_context(expression, globals, locals):
 
 
 def evaluate_expression(dbg, frame, expression, is_exec):
-    '''returns the result of the evaluated expression
-    @param is_exec: determines if we should do an exec or an eval
+    '''
+    There are some changes in this function depending on whether it's an exec or an eval.
+
+    When it's an exec (i.e.: is_exec==True):
+        This function returns None.
+        Any exception that happens during the evaluation is reraised.
+        If the expression could actually be evaluated, the variable is printed to the console if not None.
+
+    When it's an eval (i.e.: is_exec==False):
+        This function returns the result from the evaluation.
+        If some exception happens in this case, the exception is caught and a ExceptionOnEvaluate is returned.
+        Also, in this case we try to resolve name-mangling (i.e.: to be able to add a self.__my_var watch).
+
+    :param is_exec: determines if we should do an exec or an eval.
     '''
     if frame is None:
         return
 
-    # Not using frame.f_globals because of https://sourceforge.net/tracker2/?func=detail&aid=2541355&group_id=85796&atid=577329
-    # (Names not resolved in generator expression in method)
-    # See message: http://mail.python.org/pipermail/python-list/2009-January/526522.html
+    # Note: not using frame.f_globals directly because we need variables to be mutated in that
+    # context to support generator expressions (i.e.: the case below doesn't work unless
+    # globals=locals) because a generator expression actually creates a new function context.
+    # i.e.:
+    # global_vars = {}
+    # local_vars = {'ar':["foo", "bar"], 'y':"bar"}
+    # print eval('all((x == y for x in ar))', global_vars, local_vars)
+    # See: https://mail.python.org/pipermail/python-list/2009-January/522213.html
+
     updated_globals = {}
     updated_globals.update(frame.f_globals)
     updated_globals.update(frame.f_locals)  # locals later because it has precedence over the actual globals
 
     try:
-
         if IS_PY2 and isinstance(expression, unicode):
             expression = expression.replace(u'@LINE@', u'\n')
         else:
@@ -316,7 +333,7 @@ def evaluate_expression(dbg, frame, expression, is_exec):
                 # try to make it an eval (if it is an eval we can print it, otherwise we'll exec it and
                 # it will have whatever the user actually did)
                 compiled = compile(_expression_to_evaluate(expression), '<string>', 'eval')
-            except:
+            except Exception:
                 Exec(_expression_to_evaluate(expression), updated_globals, frame.f_locals)
                 pydevd_save_locals.save_locals(frame)
             else:
