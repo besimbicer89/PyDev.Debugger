@@ -1,5 +1,5 @@
 from _pydev_imps._pydev_saved_modules import threading
-from _pydevd_bundle.pydevd_comm import PyDBDaemonThread
+from _pydevd_bundle.pydevd_daemon_thread import PyDBDaemonThread
 from _pydevd_bundle.pydevd_constants import thread_get_ident, IS_CPYTHON, NULL
 import ctypes
 import time

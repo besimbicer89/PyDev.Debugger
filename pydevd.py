@@ -62,11 +62,11 @@ import pydevd_tracing
 from _pydevd_bundle.pydevd_comm import (InternalThreadCommand, InternalThreadCommandForAnyThread,
     create_server_socket)
 from _pydevd_bundle.pydevd_comm import(InternalConsoleExec,
-    PyDBDaemonThread, _queue, ReaderThread, GetGlobalDebugger, get_global_debugger,
+    _queue, ReaderThread, GetGlobalDebugger, get_global_debugger,
     set_global_debugger, WriterThread,
     start_client, start_server, InternalGetBreakpointException, InternalSendCurrExceptionTrace,
     InternalSendCurrExceptionTraceProceeded)
-
+from _pydevd_bundle.pydevd_daemon_thread import PyDBDaemonThread
 from _pydevd_bundle.pydevd_process_net_command_json import PyDevJsonCommandProcessor
 from _pydevd_bundle.pydevd_process_net_command import process_net_command
 from _pydevd_bundle.pydevd_net_command import NetCommand
