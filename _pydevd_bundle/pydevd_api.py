@@ -11,7 +11,7 @@ from _pydevd_bundle.pydevd_comm import (InternalGetThreadStack, internal_get_com
     internal_get_description, internal_get_frame, internal_evaluate_expression, InternalConsoleExec,
     internal_get_variable_json, internal_change_variable, internal_change_variable_json,
     internal_evaluate_expression_json, internal_set_expression_json, internal_get_exception_details_json,
-    internal_step_in_thread, internal_run_thread, run_as_pydevd_daemon_thread)
+    internal_step_in_thread, internal_run_thread)
 from _pydevd_bundle.pydevd_comm_constants import (CMD_THREAD_SUSPEND, file_system_encoding,
     CMD_STEP_INTO_MY_CODE, CMD_STOP_ON_START)
 from _pydevd_bundle.pydevd_constants import (get_current_thread_id, set_protocol, get_protocol,
@@ -29,6 +29,7 @@ from _pydevd_bundle.pydevd_collect_bytecode_info import code_to_bytecode_represe
 import itertools
 import linecache
 from _pydevd_bundle.pydevd_utils import DAPGrouper
+from _pydevd_bundle.pydevd_daemon_thread import run_as_pydevd_daemon_thread
 
 try:
     import dis

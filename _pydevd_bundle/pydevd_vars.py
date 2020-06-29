@@ -20,7 +20,7 @@ import sys  # @Reimport
 
 from _pydev_imps._pydev_saved_modules import threading
 import traceback
-from _pydevd_bundle import pydevd_save_locals, pydevd_timeout, pydevd_constants
+from _pydevd_bundle import pydevd_save_locals, pydevd_timeout, pydevd_constants, pydevd_utils
 from _pydev_bundle.pydev_imports import Exec, execfile
 from _pydevd_bundle.pydevd_utils import to_string
 
@@ -302,7 +302,10 @@ def _ctx(original_func):
             # interrupt_thread_callback = pydevd_timeout.create_interrupt_this_thread_callback()
 
             def on_timeout():
-                pass
+                threads = pydevd_utils.get_non_pydevd_threads()
+#                 for t in threads:
+#                     if t is not thread_to_step:
+#                         internal_run_thread(t, set_additional_thread_info)
 
             unblock_threads_timeout = pydevd_constants.PYDEVD_UNBLOCK_THREADS_TIMEOUT
 
